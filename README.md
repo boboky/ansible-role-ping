@@ -19,6 +19,25 @@ e.g
 	ansible_winrm_server_cert_validation: ignore
 
 
+To set up SSH agent assume you are using SSH keys for authentication and avoid retyping passwords, you can do
+
+	 ssh-agent bash
+	 ssh-add ~/.ssh/id_rsa
+
+
+Host File
+----------------
+
+Edit /etc/ansible/hosts and put one or more remote systems in it or create a custome host file in your blaybook
+
+         [windows]
+	 10.0.2.150
+	 server-a.example.com
+	 
+	 [linux]
+	 10.0.2.152
+	 server-b.example.com
+
 Example Playbook
 ----------------
 
@@ -28,15 +47,18 @@ Including an example of how to use your role (for instance, with variables passe
       roles:
          - { role: ansible-role-ping }
 
-
-
 If you are calling this role in your galaxy and also using a domain account, you might want to create a group_var/all
 
     |- group_vars
          |---- all
                 |-------main.yml
-                |-------vault.yml
+                |-------vault.yml              #always encrypt {ansile-encrypt /path/to/group_vars/all/vault.yml}
 
-.
+Playbook commands
 ------------------
-.
+Ping the nodes
+
+         ansible all -m ping                                   #for linux nodes
+	 ansible all -m win_ping                               #for widows nodes
+	 ansible all -m ping -u user --sudo                    # as bruce, sudoing to root
+         ansible all -m ping -u user -b --become-user user2    # as bruce, sudoing to <sudoer user>
